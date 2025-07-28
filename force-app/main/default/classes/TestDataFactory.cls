@@ -51,8 +51,7 @@ public class TestDataFactory {
       Person__c     = personId,
       Status__c     = status,
       Start_Date__c = startDate,
-      End_Date__c   = endDate,
-      Label__c      = 'TestLabel' + String.valueOf(Math.abs(Crypto.getRandomInteger())).substring(0, 4)
+      End_Date__c   = endDate
     );
     insert t;
     return t;
@@ -87,8 +86,7 @@ public class TestDataFactory {
         Person__c     = person.Id,
         Status__c     = statusValue,
         Start_Date__c = Date.today().addDays(-i),
-        End_Date__c   = Date.today().addDays(i),
-        Label__c      = 'TestLabel' + String.valueOf(Math.abs(Crypto.getRandomInteger())).substring(0, 4)
+        End_Date__c   = Date.today().addDays(i)
       ));
     }
     insert tasks;

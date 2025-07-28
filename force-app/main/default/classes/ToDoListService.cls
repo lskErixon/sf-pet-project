@@ -59,10 +59,9 @@ public class ToDoListService {
         Project__c    = projectId,
         Person__c     = personId,
         Start_Date__c = Date.today(),
-        Status__c     = DRAFT,
-        Label__c      = 'Auto-' + String.valueOf(DateTime.now().getTime()) //label d
+        Status__c     = DRAFT
       );
-      System.debug('Created Task:' + task);
+ 
       insert task;
     } catch (DmlException e) {
       System.debug('Error inserting Task__c: ' + e.getMessage());
