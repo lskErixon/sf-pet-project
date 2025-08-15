@@ -1,22 +1,22 @@
 public with sharing class TaskTotalsRollupHandler extends TriggerHandler {
 
-  public override void afterInsert() { runRecalculationForAffectedPersons(Trigger.new, null); }
-  public override void afterUpdate() { runRecalculationForAffectedPersons(Trigger.new, Trigger.old); }
-  public override void afterDelete() { runRecalculationForAffectedPersons(null, Trigger.old); }
-  public override void afterUndelete() { runRecalculationForAffectedPersons(Trigger.new, null); }
+  public override void afterInsert()   { runRecalc(Trigger.new, Trigger.old); }
+  public override void afterUpdate()   { runRecalc(Trigger.new, Trigger.old); }
+  public override void afterDelete()   { runRecalc(Trigger.new, Trigger.old); }
+  public override void afterUndelete() { runRecalc(Trigger.new, Trigger.old); }
 
-  private void runRecalculationForAffectedPersons(List<SObject> newRecordList, List<SObject> oldRecordList) {
-    Set<Id> personIdSet = new Set<Id>();
-      if (newRecordList != null) {
-        personIdSet.addAll(
-        PersonTotalsRollupService.collectPersonIdsFromTaskRecords((List<Task__c>) newRecordList, null)
+  private void runRecalc(List<SObject> newList, List<SObject> oldList) {
+    Set<Id> affectedPersonIds = new Set<Id>();
+    if (newList != null) {
+      affectedPersonIds.addAll(
+        PersonTotalsRollupService.collectPersonIdsFromTaskRecords((List<Task__c>) newList, null)
       );
     }
-    if (oldRecordList != null) {
-      personIdSet.addAll(
-        PersonTotalsRollupService.collectPersonIdsFromTaskRecords(null, (List<Task__c>) oldRecordList)
+    if (oldList != null) {
+      affectedPersonIds.addAll(
+        PersonTotalsRollupService.collectPersonIdsFromTaskRecords(null, (List<Task__c>) oldList)
       );
     }
-    PersonTotalsRollupService.recalculateTotalsForPersons(personIdSet);
+    PersonTotalsRollupService.recalculateTotalsForPersons(affectedPersonIds);
   }
 }
