@@ -1,8 +1,8 @@
-public class ToDoListService {
-  private final static String COMPLETED = 'Completed';
-  private final static String STARTED = 'Started';
-  private final static String DRAFT = 'Draft';
-  private final static String IN_PROGRESS = 'In Progress';
+public with sharing class ToDoListService {
+  private static final String COMPLETED = 'Completed';
+  private static final String STARTED = 'Started';
+  private static final String DRAFT = 'Draft';
+  private static final String IN_PROGRESS = 'In Progress';
   private static final String FINISHED_WITH_DELAY = 'Finished with Delay';
   private static final String FINISHED_IN_TIME = 'Finished in Time';
   private static final Integer ONLY_ONE = 1;
