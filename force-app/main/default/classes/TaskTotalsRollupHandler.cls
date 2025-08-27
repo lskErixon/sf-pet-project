@@ -1,8 +1,8 @@
 public with sharing class TaskTotalsRollupHandler extends TriggerHandler {
 
-  public override void afterInsert()   { runRecalc(Trigger.new, Trigger.old); }
-  public override void afterUpdate()   { runRecalc(Trigger.new, Trigger.old); }
-  public override void afterDelete()   { runRecalc(Trigger.new, Trigger.old); }
+  public override void afterInsert() { runRecalc(Trigger.new, Trigger.old); }
+  public override void afterUpdate() { runRecalc(Trigger.new, Trigger.old); }
+  public override void afterDelete() { runRecalc(Trigger.new, Trigger.old); }
   public override void afterUndelete() { runRecalc(Trigger.new, Trigger.old); }
 
   private void runRecalc(List<SObject> newList, List<SObject> oldList) {
