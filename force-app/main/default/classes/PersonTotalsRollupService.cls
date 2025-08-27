@@ -1,7 +1,9 @@
 public with sharing class PersonTotalsRollupService {
 
   public static void recalculateTotalsForPersons(Set<Id> personIdSet) {
-    if (personIdSet == null || personIdSet.isEmpty()) return;
+    if (personIdSet == null || personIdSet.isEmpty()) {
+      return;
+    } 
 
     Map<Id, Integer> taskCountByPersonId = new Map<Id, Integer>();
     for (AggregateResult row : [
