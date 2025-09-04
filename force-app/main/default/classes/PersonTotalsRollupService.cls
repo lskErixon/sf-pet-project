@@ -24,7 +24,7 @@ public with sharing class PersonTotalsRollupService {
       taskCountByPersonId.put(personId, (currentTaskCount == null ? 1 : currentTaskCount + 1));
 
       if (taskRecord.Project__c != null) {
-          Set<Id> projectSet = projectIdSetByPersonId.get(personId);
+        Set<Id> projectSet = projectIdSetByPersonId.get(personId);
         if (projectSet == null) {
           projectSet = new Set<Id>();
           projectIdSetByPersonId.put(personId, projectSet);
@@ -39,14 +39,14 @@ public with sharing class PersonTotalsRollupService {
       ? taskCountByPersonId.get(personId) 
       : 0;
 
-      Integer distinctProjectCount = projectIdSetByPersonId.containsKey(personId)
+      Integer projectCount = projectIdSetByPersonId.containsKey(personId)
       ? projectIdSetByPersonId.get(personId).size()
       : 0;
 
       personsToUpdate.add(new Person__c(
         Id = personId,
         Total_Amount_Tasks__c    = taskCount,
-        Total_Amount_Projects__c = distinctProjectCount
+        Total_Amount_Projects__c = projectCount
       ));
     }
 
@@ -67,7 +67,6 @@ public with sharing class PersonTotalsRollupService {
         personIdSet.add(taskRecord.Person__c);
       }
     }
-    personIdSet.remove(null);
     return personIdSet;
   }
 }

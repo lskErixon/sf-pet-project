@@ -1,22 +1,15 @@
 public with sharing class TaskPersonGuardHandler extends TriggerHandler {
-
   private static final String STATUS_COMPLETED = 'Completed';
 
   public override void beforeUpdate() {
-    List<Task__c> newTaskRecordList = (List<Task__c>) Trigger.new;
-    List<Task__c> oldTaskRecordList = (List<Task__c>) Trigger.old;
-    for (Integer i = 0; i < newTaskRecordList.size(); i++) {
-      Task__c newTaskRecord = newTaskRecordList[i];
-      Task__c oldTaskRecord = oldTaskRecordList[i];
+    Map<Id, Task__c> oldMap = (Map<Id, Task__c>) Trigger.oldMap;
 
-      Boolean isPersonChanged    = newTaskRecord.Person__c != oldTaskRecord.Person__c;
-      Boolean isCompletedNow     = newTaskRecord.Status__c == STATUS_COMPLETED;
-      Boolean wasCompletedBefore = oldTaskRecord.Status__c == STATUS_COMPLETED;
+    for (Task__c taskNew : (List<Task__c>) Trigger.new) {
+      Task__c taskOld = oldMap.get(taskNew.Id);
 
-      if (isPersonChanged && (isCompletedNow || wasCompletedBefore)) {
-        newTaskRecord.Person__c.addError(
-          'Cannot change Person__c on a task with Status = Completed.'
-        );
+      if ((taskNew.Status__c == STATUS_COMPLETED || taskOld.Status__c == STATUS_COMPLETED)
+        && taskNew.Person__c != taskOld.Person__c) {
+          taskNew.Person__c.addError('Cannot change Person__c on a task once it is marked as Completed.');
       }
     }
   }

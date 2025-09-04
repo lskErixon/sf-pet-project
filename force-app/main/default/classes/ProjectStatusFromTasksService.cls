@@ -16,8 +16,9 @@ public with sharing class ProjectStatusFromTasksService {
   };
 
   public static void recalculateForProjects(Set<Id> projectIdSet) {
-    if (projectIdSet == null || projectIdSet.isEmpty()) return;
-      
+    if (projectIdSet == null || projectIdSet.isEmpty()) {
+      return;
+    }
     Map<Id, Project__c> projectsById = new Map<Id, Project__c>([
       SELECT Id, Status__c, Planed_End_Date__c,
         Draft_DateTime__c, In_Progress_DateTime__c,
@@ -26,7 +27,9 @@ public with sharing class ProjectStatusFromTasksService {
       FROM Project__c
       WHERE Id IN :projectIdSet
     ]);
-    if (projectsById.isEmpty()) return;
+    if (projectsById.isEmpty()) {
+      return;
+    }
 
     Map<Id, List<Task__c>> tasksByProjectId = new Map<Id, List<Task__c>>();
       for (Task__c t : [
@@ -64,7 +67,9 @@ public with sharing class ProjectStatusFromTasksService {
       }
       shouldUpdate = setFirstEntryTimestampIfEmpty(current, updateRow, newStatus) || shouldUpdate;
 
-      if (shouldUpdate) projectsToUpdate.add(updateRow);
+      if (shouldUpdate) { 
+        projectsToUpdate.add(updateRow);
+      }
     }
     if (!projectsToUpdate.isEmpty()) {
       update projectsToUpdate;
@@ -73,7 +78,9 @@ public with sharing class ProjectStatusFromTasksService {
 
   private static Boolean setFirstEntryTimestampIfEmpty(Project__c current, Project__c updateRow, String status) {
     Schema.SObjectField tsField = STATUS_TO_TS_FIELD.get(status);
-    if (tsField == null) return false;
+    if (tsField == null) {
+      return false;
+    }
 
     Object hasValue = current.get(tsField);
     if (hasValue == null) {
