@@ -20,7 +20,6 @@ public with sharing class ProjectStatusFromTasksHandler extends TriggerHandler {
           projectIdSet.add(t.Project__c);
       }
     }
-    projectIdSet.remove(null);
     if (projectIdSet.isEmpty()) {
       return;
     }

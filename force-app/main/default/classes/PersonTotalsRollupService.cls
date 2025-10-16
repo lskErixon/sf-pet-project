@@ -16,9 +16,6 @@ public with sharing class PersonTotalsRollupService {
 
     for (Task__c taskRecord : taskList) {
       Id personId = taskRecord.Person__c;
-      if (personId == null) { 
-        continue;
-      }
 
       Integer currentTaskCount = taskCountByPersonId.get(personId);
       taskCountByPersonId.put(personId, (currentTaskCount == null ? 1 : currentTaskCount + 1));
