@@ -1,4 +1,3 @@
-// file: classes/TaskHighPriorityHandler.cls
 public with sharing class TaskHighPriorityHandler extends TriggerHandler {
 
   public override void afterInsert() {
@@ -28,25 +27,32 @@ public with sharing class TaskHighPriorityHandler extends TriggerHandler {
   private static void handleInternal(List<Task__c> newRecords, Map<Id, Task__c> oldMap) {
     Set<Id> toAlert = new Set<Id>();
 
-    for (Task__c rec : newRecords) {
-      if (rec.High_Priority__c != true || rec.Person__c == null) {
+    for (Task__c record : newRecords) {
+      if (record.High_Priority__c != true || record.Person__c == null) {
         continue;
-      } 
+      }
 
-      if (oldMap == null) {
-                toAlert.add(rec.Id);
-            } else {
-        Task__c oldRec = oldMap.get(rec.Id);
-        Boolean flagChanged   = rec.High_Priority__c != oldRec.High_Priority__c;
-        Boolean personChanged = rec.Person__c != oldRec.Person__c;
-        if (flagChanged || personChanged) {
-          toAlert.add(rec.Id);
-        }
+    if (oldMap == null) {
+        toAlert.add(record.Id);
+    } else {
+        Task__c oldRecord = oldMap.get(record.Id);
+      if (shouldSendAlert(record, oldRecord)) {
+        toAlert.add(record.Id);
       }
     }
+  }
 
-    if (!toAlert.isEmpty()) {
+  if (!toAlert.isEmpty()) {
       HighPriorityTaskAlertService.sendAlertsAsync(new List<Id>(toAlert));
     }
+  }
+
+  private static Boolean shouldSendAlert(Task__c newRecord, Task__c oldRecord) {
+    if (oldRecord == null) {
+        return true;
+    }
+    Boolean highPriorityChanged = newRecord.High_Priority__c != oldRecord.High_Priority__c;
+    Boolean personChanged = newRecord.Person__c != oldRecord.Person__c;
+    return highPriorityChanged || personChanged;
   }
 }
