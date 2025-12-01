@@ -4,43 +4,27 @@ public with sharing class HighPriorityTaskAlertService {
   public static void sendAlertsAsync(List<Id> taskIdList) {
     if (taskIdList == null || taskIdList.isEmpty()) {
       return;
-    } 
-    Set<Id> taskIds = new Set<Id>(taskIdList);
+    }
 
     List<Task__c> tasks = [
-      SELECT Id,
-          Name,
-          Person__c,
-          Person__r.Name,
-          Person__r.Email__c
+      SELECT Id, Name, Person__c, Person__r.Email__c
       FROM Task__c
-      WHERE Id IN :taskIds
+      WHERE Id IN :taskIdList
     ];
 
     String baseUrl = System.Url.getOrgDomainUrl().toExternalForm();
-    List<Messaging.SingleEmailMessage> batch = new List<Messaging.SingleEmailMessage>();
+    List<Messaging.SingleEmailMessage> emails = new List<Messaging.SingleEmailMessage>();
 
     for (Task__c task : tasks) {
-      if (task.Person__r == null || String.isBlank(task.Person__r.Email__c)) {
-        continue;
-      } 
+      Messaging.SingleEmailMessage msg =
+        TaskEmailFactory.buildHighPriorityAlertEmail(task, baseUrl);
 
-      String safeName = String.isBlank(task.Name) ? String.valueOf(task.Id) : task.Name;
-      String recordUrl = baseUrl + '/' + task.Id;
-
-      Messaging.SingleEmailMessage m = new Messaging.SingleEmailMessage();
-      m.setToAddresses(new List<String>{ task.Person__r.Email__c });
-      m.setSubject('High Priority Task Alert: ' + safeName);
-      m.setPlainTextBody(
-        'This task was marked as HIGH PRIORITY.' + '\n\n' +
-        'Task: ' + safeName + '\n' +
-        'Open the task: ' + recordUrl + '\n'
-      );
-      batch.add(m);
+      if (msg != null) {
+        emails.add(msg);
+      }
     }
-
-    if (!batch.isEmpty()) {
-      Messaging.sendEmail(batch, false);
+    if (!emails.isEmpty()) {
+      Messaging.sendEmail(emails, false);
     }
   }
 }
